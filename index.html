@@ -2,210 +2,203 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>2026 ECIS Academic Calendar</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#264653">
+    <meta name="apple-mobile-web-app-title" content="ECIS Cal">
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+SC:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            /* 기본 테마 */
             --bg-cream: #FAF9F6;
             --deep-teal: #264653;
             --text-dark: #2c3e50;
             --card-shadow: 5px 5px 0px rgba(38, 70, 83, 0.15);
-
-            /* 🎨 학과별 포인트 컬러 (요청하신 색상) */
-            --col-common: #8BC34A; /* 연두 */
-            --col-aim: #9B59B6;    /* 보라 (AI경영) */
-            --col-aib: #3498DB;    /* 파랑 (AI빅데이터) */
-            --col-gh: #F1C40F;     /* 노랑 (글로벌호스피) */
-            --col-id: #E67E22;     /* 오렌지 (자유전공) */
-            
-            --col-holiday: #E74C3C; /* 공휴일 (빨강) */
-            --col-academic: #2A9D8F; /* 학사일정 (청록) */
+            /* Department Colors */
+            --col-common: #8BC34A; --col-aim: #9B59B6; --col-aib: #3498DB;
+            --col-gh: #F1C40F; --col-id: #E67E22;
+            --col-holiday: #E74C3C; --col-academic: #2A9D8F;
         }
 
         body {
             font-family: 'Open Sans', 'Noto Sans SC', sans-serif;
             background-color: var(--bg-cream);
             color: var(--text-dark);
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
+            /* iOS Safe Area handling */
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(231, 111, 81, 0.05) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(42, 157, 143, 0.05) 0%, transparent 20%);
             background-attachment: fixed;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- Header & Lang Switcher --- */
         header {
-            background-color: var(--deep-teal);
-            color: white;
-            padding: 70px 20px 50px;
-            text-align: center;
-            position: relative;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
+            background-color: var(--deep-teal); color: white;
+            padding: 60px 20px 40px; text-align: center; position: relative;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
         }
 
         .lang-switcher {
             position: absolute; top: 20px; right: 20px;
-            display: flex; gap: 10px; z-index: 50;
+            display: flex; gap: 8px; z-index: 50;
         }
-
         .lang-btn {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.5);
-            color: white; padding: 5px 12px; border-radius: 20px;
-            cursor: pointer; font-weight: bold; font-family: 'Montserrat';
-            transition: all 0.3s; font-size: 0.8em;
+            background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5);
+            color: white; padding: 6px 10px; border-radius: 15px;
+            cursor: pointer; font-weight: bold; font-family: 'Montserrat'; font-size: 0.75em;
         }
-        .lang-btn.active, .lang-btn:hover {
-            background: var(--col-gh); color: var(--text-dark);
-            border-color: var(--col-gh); transform: scale(1.1);
-        }
-        
+        .lang-btn.active { background: var(--col-gh); color: #333; border-color: var(--col-gh); }
+
         h1 {
             font-family: 'Montserrat', sans-serif; font-weight: 900;
-            font-size: 2.2em; margin: 0; text-transform: uppercase;
+            font-size: 1.8em; margin: 0; text-transform: uppercase;
             position: relative; display: inline-block; line-height: 1.2;
         }
-        h1::after {
-            content: ''; position: absolute; left: 0; bottom: -10px; width: 100%; height: 8px;
-            background-color: var(--col-id); transform: skewX(-20deg);
-        }
-        p { margin-top: 20px; font-size: 1.1em; opacity: 0.9; }
+        p { margin-top: 15px; font-size: 1em; opacity: 0.9; }
 
         .container {
-            max-width: 1100px; margin: -30px auto 100px;
-            padding: 0 20px; position: relative; z-index: 10;
+            max-width: 800px; margin: -30px auto 100px;
+            padding: 0 15px; position: relative; z-index: 10;
         }
 
-        .controls { text-align: center; margin-bottom: 40px; }
+        .controls { text-align: center; margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; }
         select {
-            padding: 12px 24px; border-radius: 30px;
+            padding: 10px 20px; border-radius: 30px;
             border: 3px solid var(--deep-teal); font-size: 16px;
-            font-weight: 700; color: var(--deep-teal);
-            background: white; cursor: pointer; box-shadow: var(--card-shadow);
+            font-weight: 700; color: var(--deep-teal); background: white;
         }
 
-        /* --- Calendar Grid --- */
-        .calendar-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px; align-items: start;
+        /* Install Button (Hidden by default) */
+        #installBtn {
+            display: none; padding: 10px 20px; border-radius: 30px;
+            background: var(--col-id); color: white; border: none;
+            font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite; cursor: pointer;
         }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+            gap: 20px; align-items: start;
+        }
+        @media(min-width: 600px) { .calendar-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); } }
 
         .event-card {
             background: white; border: 2px solid var(--deep-teal);
-            padding: 25px; position: relative;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: var(--card-shadow); border-radius: 4px 12px 4px 12px;
-            overflow: hidden;
+            padding: 20px; position: relative; border-radius: 15px;
+            box-shadow: var(--card-shadow); transition: transform 0.2s;
         }
-        .event-card:hover {
-            transform: translate(-5px, -5px) rotate(-1deg);
-            box-shadow: 10px 10px 0px rgba(38, 70, 83, 0.1);
-            z-index: 1;
-        }
+        .event-card:active { transform: scale(0.98); }
 
-        /* Hover border colors based on type */
-        .event-card.dept-common:hover { border-color: var(--col-common); }
-        .event-card.dept-aim:hover { border-color: var(--col-aim); }
-        .event-card.dept-aib:hover { border-color: var(--col-aib); }
-        .event-card.dept-gh:hover { border-color: var(--col-gh); }
-        .event-card.dept-id:hover { border-color: var(--col-id); }
+        /* Department Colors */
+        .event-card.dept-common { border-left: 8px solid var(--col-common); }
+        .event-card.dept-aim { border-left: 8px solid var(--col-aim); }
+        .event-card.dept-aib { border-left: 8px solid var(--col-aib); }
+        .event-card.dept-gh { border-left: 8px solid var(--col-gh); }
+        .event-card.dept-id { border-left: 8px solid var(--col-id); }
 
         .user-badge {
-            position: absolute; top: 0; right: 0;
-            background: #333; color: white;
-            font-size: 0.6em; padding: 4px 8px;
-            border-bottom-left-radius: 8px; font-weight: bold;
+            position: absolute; top: 15px; right: 15px;
+            background: #333; color: white; font-size: 0.7em;
+            padding: 3px 8px; border-radius: 10px; font-weight: bold;
         }
 
-        .event-month {
-            font-weight: 900; color: #999;
-            font-size: 0.9em; text-transform: uppercase;
-            letter-spacing: 1px; margin-bottom: 5px;
-        }
+        .event-month { font-weight: 900; color: #aaa; font-size: 0.8em; margin-bottom: 5px; }
         .event-date {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.3em; font-weight: 900;
-            margin-bottom: 15px; color: var(--deep-teal);
-            background: linear-gradient(120deg, rgba(230, 230, 230, 0.4) 0%, rgba(255,255,255, 0) 100%);
-            display: inline-block;
+            font-family: 'Montserrat'; font-size: 1.4em; font-weight: 900;
+            margin-bottom: 10px; color: var(--deep-teal);
         }
-        .event-title { font-size: 1.15em; line-height: 1.5; font-weight: 600; margin-bottom: 20px; }
-        
-        /* 🏷️ Tag Styles (Colors) */
         .tag {
-            display: inline-block; padding: 6px 12px;
-            border-radius: 20px; font-size: 0.75em;
-            font-weight: 700; text-transform: uppercase;
-            background: #ccc; color: white;
+            display: inline-block; padding: 5px 10px; border-radius: 15px;
+            font-size: 0.7em; font-weight: 700; color: white; margin-top: 10px;
         }
-        
-        /* 학과별 컬러 적용 */
-        .tag.dept-common { background: var(--col-common); } /* 연두 */
-        .tag.dept-aim    { background: var(--col-aim); }    /* 보라 */
-        .tag.dept-aib    { background: var(--col-aib); }    /* 파랑 */
-        .tag.dept-gh     { background: var(--col-gh); color: #333; } /* 노랑 (글씨 검정) */
-        .tag.dept-id     { background: var(--col-id); }     /* 오렌지 */
-        
-        /* 기본 타입 컬러 */
-        .tag.holiday  { background: var(--col-holiday); }
+        .tag.dept-common { background: var(--col-common); }
+        .tag.dept-aim { background: var(--col-aim); }
+        .tag.dept-aib { background: var(--col-aib); }
+        .tag.dept-gh { background: var(--col-gh); color: #333; }
+        .tag.dept-id { background: var(--col-id); }
+        .tag.holiday { background: var(--col-holiday); }
         .tag.academic { background: var(--col-academic); }
-        .tag.event    { background: var(--deep-teal); }
+        .tag.event { background: var(--deep-teal); }
 
-        /* --- FAB & Modal --- */
+        /* FAB */
         .fab {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 70px; height: 70px;
+            position: fixed; bottom: 30px; right: 20px;
+            width: 60px; height: 60px;
             background-color: var(--deep-teal); color: white;
-            border-radius: 50%; display: flex;
-            align-items: center; justify-content: center;
-            font-size: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            cursor: pointer; transition: transform 0.3s; z-index: 100;
-            border: 2px solid white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 28px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 100;
+            border: 2px solid white; cursor: pointer;
         }
-        .fab:hover { transform: scale(1.1) rotate(90deg); background-color: var(--col-id); }
 
+        /* Modal */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(38, 70, 83, 0.8); z-index: 200;
-            align-items: center; justify-content: center; backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.6); z-index: 200; backdrop-filter: blur(3px);
+            align-items: center; justify-content: center;
         }
         .modal-content {
-            background: var(--bg-cream); padding: 40px;
-            width: 90%; max-width: 500px;
-            border-radius: 20px; border: 4px solid var(--deep-teal);
-            box-shadow: 15px 15px 0 rgba(0,0,0,0.2);
-            transform: rotate(-2deg);
+            background: #fff; padding: 30px 20px; width: 85%; max-width: 400px;
+            border-radius: 20px; border: 3px solid var(--deep-teal);
         }
-        .modal-content h2 {
-            margin-top: 0; border-bottom: 3px solid var(--col-aim);
-            display: inline-block; padding-bottom: 5px;
-        }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
         .form-group input, .form-group select {
-            width: 100%; padding: 12px; border: 2px solid #ddd;
-            border-radius: 8px; font-size: 16px; box-sizing: border-box;
+            width: 100%; padding: 10px; border: 2px solid #ddd;
+            border-radius: 10px; box-sizing: border-box; font-size: 16px;
         }
-        
-        .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 30px; }
-        .btn { padding: 12px 25px; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn { padding: 10px 20px; border-radius: 20px; border: none; font-weight: bold; }
         .btn-save { background: var(--deep-teal); color: white; }
-        .btn-cancel { background: #ddd; color: #555; }
-
-        @media (max-width: 768px) {
-            .calendar-grid { grid-template-columns: 1fr; padding-left: 20px; }
-            .calendar-grid::before {
-                content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 4px;
-                background: repeating-linear-gradient(45deg, var(--deep-teal), var(--deep-teal) 10px, var(--bg-cream) 10px, var(--bg-cream) 20px);
-            }
-        }
+        .btn-cancel { background: #eee; }
     </style>
 </head>
 <body>
+
+<script>
+    // 1. Create Dynamic Icon (Emoji)
+    const iconCanvas = document.createElement('canvas');
+    iconCanvas.width = 512; iconCanvas.height = 512;
+    const ctx = iconCanvas.getContext('2d');
+    ctx.fillStyle = '#264653'; ctx.fillRect(0,0,512,512); // Background
+    ctx.font = '300px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🎨', 256, 270); // Emoji
+    const iconUrl = iconCanvas.toDataURL('image/png');
+
+    // 2. Inject Link Tags
+    const linkIcon = document.createElement('link');
+    linkIcon.rel = 'apple-touch-icon'; linkIcon.href = iconUrl;
+    document.head.appendChild(linkIcon);
+    const linkFav = document.createElement('link');
+    linkFav.rel = 'icon'; linkFav.href = iconUrl;
+    document.head.appendChild(linkFav);
+
+    // 3. Create Dynamic Manifest
+    const manifest = {
+        "name": "ECIS Calendar",
+        "short_name": "ECIS Cal",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#FAF9F6",
+        "theme_color": "#264653",
+        "orientation": "portrait",
+        "icons": [{ "src": iconUrl, "sizes": "512x512", "type": "image/png" }]
+    };
+    const stringManifest = JSON.stringify(manifest);
+    const blob = new Blob([stringManifest], {type: 'application/json'});
+    const manifestURL = URL.createObjectURL(blob);
+    const linkManifest = document.createElement('link');
+    linkManifest.rel = 'manifest'; linkManifest.href = manifestURL;
+    document.head.appendChild(linkManifest);
+</script>
 
 <header>
     <div class="lang-switcher">
@@ -219,12 +212,12 @@
 
 <div class="container">
     <div class="controls">
-        <select id="monthFilter" onchange="renderCalendar()">
-            </select>
+        <button id="installBtn" onclick="installApp()">📲 Install App</button>
+        <select id="monthFilter" onchange="renderCalendar()"></select>
     </div>
 
     <div id="calendarGrid" class="calendar-grid">
-        <p style="text-align:center;">Loading Calendar...</p>
+        <p style="text-align:center;">Loading...</p>
     </div>
 </div>
 
@@ -232,32 +225,32 @@
 
 <div class="modal-overlay" id="eventModal">
     <div class="modal-content">
-        <h2 id="modal-title">✏️ 일정 추가</h2>
+        <h2 id="modal-title">✏️ Add Event</h2>
         <div class="form-group">
-            <label id="label-title">일정 제목</label>
-            <input type="text" id="inputTitle" placeholder="Event Title">
+            <label id="label-title">Title</label>
+            <input type="text" id="inputTitle">
         </div>
         <div class="form-group">
-            <label id="label-start">시작일</label>
+            <label id="label-start">Start Date</label>
             <input type="date" id="inputStart">
         </div>
         <div class="form-group">
-            <label id="label-end">종료일 (선택)</label>
+            <label id="label-end">End Date</label>
             <input type="date" id="inputEnd">
         </div>
         <div class="form-group">
-            <label id="label-cat">학과/구분 (Department)</label>
+            <label id="label-cat">Dept / Category</label>
             <select id="inputType">
-                <option value="dept-common">🟢 ECIS 공통 (Common)</option>
-                <option value="dept-aim">🟣 AI경영 (AI Mgmt)</option>
-                <option value="dept-aib">🔵 AI빅데이터 (AI BigData)</option>
-                <option value="dept-gh">🟡 글로벌호스피 (Global Hosp)</option>
-                <option value="dept-id">🟠 자유전공 (Interdisciplinary)</option>
+                <option value="dept-common">🟢 Common</option>
+                <option value="dept-aim">🟣 AI Mgmt</option>
+                <option value="dept-aib">🔵 AI BigData</option>
+                <option value="dept-gh">🟡 Global Hosp</option>
+                <option value="dept-id">🟠 Interdisciplinary</option>
             </select>
         </div>
         <div class="btn-group">
-            <button class="btn btn-cancel" onclick="closeModal()" id="btn-cancel">취소</button>
-            <button class="btn btn-save" onclick="saveEvent()" id="btn-save">저장</button>
+            <button class="btn btn-cancel" onclick="closeModal()" id="btn-cancel">Cancel</button>
+            <button class="btn btn-save" onclick="saveEvent()" id="btn-save">Save</button>
         </div>
     </div>
 </div>
@@ -266,7 +259,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
-    // 🔴 [YOUR FIREBASE CONFIG HERE] - 이 부분을 본인의 설정으로 채워주세요!
+    // 🔴 [YOUR FIREBASE CONFIG HERE] - 실제 키값으로 교체 필수!
     const firebaseConfig = {
         apiKey: "AIzaSyAdkdWL2ab0f_fiYvmS0Q_btAQP76-IufM",
   authDomain: "ecis-calendar-c83bb.firebaseapp.com",
@@ -281,119 +274,63 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // --- 🌍 Multilingual Data ---
+    // Multilingual Data
     let currentLang = 'ko';
-
     const i18n = {
         ko: {
-            title: "2026 ECIS 학사 일정표",
-            subtitle: "우송대학교 Endicott College of International Studies",
-            allMonths: "🎨 전체 일정 모아보기",
-            empty: "해당 기간에 일정이 없습니다.",
-            modalTitle: "✏️ 학과 일정 추가",
-            lblTitle: "일정 제목",
-            lblStart: "시작일",
-            lblEnd: "종료일 (선택)",
-            lblCat: "학과/구분",
-            btnCancel: "취소",
-            btnSave: "저장하기",
-            cats: {
-                holiday: "🔴 공휴일", academic: "🔵 학사 일정", admin: "⚪️ 행정", event: "🟡 행사",
-                // New Departments
-                "dept-common": "🟢 ECIS 공통",
-                "dept-aim": "🟣 AI경영",
-                "dept-aib": "🔵 AI빅데이터",
-                "dept-gh": "🟡 글로벌호스피",
-                "dept-id": "🟠 자유전공"
-            },
+            title: "2026 ECIS 학사 일정", subtitle: "우송대학교 Endicott College",
+            allMonths: "전체 보기", empty: "일정이 없습니다.",
+            modalTitle: "일정 추가", lblTitle: "제목", lblStart: "시작일", lblEnd: "종료일", lblCat: "구분",
+            btnCancel: "취소", btnSave: "저장", install: "📲 앱 설치하기",
+            cats: { "dept-common":"🟢 공통", "dept-aim":"🟣 AI경영", "dept-aib":"🔵 AI빅데이터", "dept-gh":"🟡 글로벌호스피", "dept-id":"🟠 자유전공", holiday:"🔴 공휴일", academic:"🔵 학사", event:"🟡 행사" },
             months: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
         },
         en: {
-            title: "2026 ECIS Academic Calendar",
-            subtitle: "Woosong Univ. Endicott College of International Studies",
-            allMonths: "🎨 View All Events",
-            empty: "No events found.",
-            modalTitle: "✏️ Add Dept Event",
-            lblTitle: "Event Title",
-            lblStart: "Start Date",
-            lblEnd: "End Date",
-            lblCat: "Department",
-            btnCancel: "Cancel",
-            btnSave: "Save",
-            cats: {
-                holiday: "🔴 Holiday", academic: "🔵 Academic", admin: "⚪️ Admin", event: "🟡 Event",
-                // New Departments
-                "dept-common": "🟢 ECIS Common",
-                "dept-aim": "🟣 AI Mgmt",
-                "dept-aib": "🔵 AI Big Data",
-                "dept-gh": "🟡 Global Hosp.",
-                "dept-id": "🟠 Interdisciplinary"
-            },
+            title: "2026 ECIS Calendar", subtitle: "Woosong Univ. Endicott College",
+            allMonths: "View All", empty: "No events.",
+            modalTitle: "Add Event", lblTitle: "Title", lblStart: "Start", lblEnd: "End", lblCat: "Dept",
+            btnCancel: "Cancel", btnSave: "Save", install: "📲 Install App",
+            cats: { "dept-common":"🟢 Common", "dept-aim":"🟣 AI Mgmt", "dept-aib":"🔵 AI BigData", "dept-gh":"🟡 Global Hosp", "dept-id":"🟠 Interdisciplinary", holiday:"🔴 Holiday", academic:"🔵 Academic", event:"🟡 Event" },
             months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
         },
         zh: {
-            title: "2026 ECIS 学术校历",
-            subtitle: "又松大学 Endicott 国际大学",
-            allMonths: "🎨 查看所有日程",
-            empty: "没有日程。",
-            modalTitle: "✏️ 添加学科日程",
-            lblTitle: "日程标题",
-            lblStart: "开始日期",
-            lblEnd: "结束日期",
-            lblCat: "学科/分类",
-            btnCancel: "取消",
-            btnSave: "保存",
-            cats: {
-                holiday: "🔴 公休日", academic: "🔵 学事日程", admin: "⚪️ 行政", event: "🟡 活动",
-                // New Departments
-                "dept-common": "🟢 学院公用",
-                "dept-aim": "🟣 AI经营",
-                "dept-aib": "🔵 AI大数据",
-                "dept-gh": "🟡 全球酒店管理",
-                "dept-id": "🟠 自由专业"
-            },
+            title: "2026 ECIS 校历", subtitle: "又松大学 Endicott 学院",
+            allMonths: "查看全部", empty: "无日程",
+            modalTitle: "添加日程", lblTitle: "标题", lblStart: "开始", lblEnd: "结束", lblCat: "分类",
+            btnCancel: "取消", btnSave: "保存", install: "📲 安装应用",
+            cats: { "dept-common":"🟢 公共", "dept-aim":"🟣 AI经营", "dept-aib":"🔵 AI大数据", "dept-gh":"🟡 全球酒店", "dept-id":"🟠 自由专业", holiday:"🔴 公休", academic:"🔵 学事", event:"🟡 活动" },
             months: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
         }
     };
 
-    // Static Data
     const staticEvents = [
-        { month: 1, date: "2026-01-01", type: "holiday", title: { ko: "새해 첫날", en: "New Year's Day", zh: "元旦" } },
-        { month: 1, date: "2026-01-12 ~ 01-16", type: "admin", title: { ko: "1학기 전과/재입학 신청", en: "Change of Major/Re-admission App", zh: "第一学期转专业/复学申请" } },
-        { month: 2, date: "2026-02-12", type: "event", title: { ko: "전기 학위수여식(졸업식)", en: "Commencement", zh: "毕业典礼" } },
-        { month: 2, date: "2026-02-27", type: "event", title: { ko: "입학식", en: "Matriculation Ceremony", zh: "入学典礼" } },
-        { month: 3, date: "2026-03-02", type: "academic", title: { ko: "1학기 개강", en: "Spring Semester Begins", zh: "第一学期开学" } },
-        { month: 4, date: "2026-04-20 ~ 04-26", type: "academic", title: { ko: "중간고사", en: "Midterm Exams", zh: "期中考试" } },
-        { month: 6, date: "2026-06-15", type: "academic", title: { ko: "1학기 종강", en: "Spring Semester Ends", zh: "第一学期结束" } },
-        { month: 9, date: "2026-09-01", type: "academic", title: { ko: "2학기 개강", en: "Fall Semester Begins", zh: "第二学期开学" } },
-        { month: 9, date: "2026-09-24 ~ 09-26", type: "holiday", title: { ko: "추석 연휴", en: "Chuseok Holiday", zh: "中秋连休" } },
-        { month: 10, date: "2026-10-15", type: "event", title: { ko: "개교기념일", en: "Foundation Day", zh: "建校纪念日" } },
-        { month: 12, date: "2026-12-14", type: "academic", title: { ko: "2학기 종강", en: "Fall Semester Ends", zh: "第二学期结束" } }
+        { month: 1, date: "2026-01-01", type: "holiday", title: { ko: "새해", en: "New Year", zh: "元旦" } },
+        { month: 2, date: "2026-02-27", type: "event", title: { ko: "입학식", en: "Matriculation", zh: "入学典礼" } },
+        { month: 3, date: "2026-03-02", type: "academic", title: { ko: "개강", en: "Spring Begins", zh: "开学" } }
+        // 필요 시 더 추가
     ];
 
     let allEvents = [];
-
-    // --- Firebase Logic ---
     const eventsRef = ref(db, 'events');
-    onValue(eventsRef, (snapshot) => {
-        const data = snapshot.val();
+    onValue(eventsRef, (snap) => {
+        const data = snap.val();
         const userEvents = data ? Object.values(data) : [];
-        allEvents = [...staticEvents, ...userEvents].sort((a, b) => a.date.localeCompare(b.date));
+        allEvents = [...staticEvents, ...userEvents].sort((a,b)=>a.date.localeCompare(b.date));
         renderUI();
     });
 
-    window.setLanguage = function(lang) {
+    window.setLanguage = (lang) => {
         currentLang = lang;
         document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
         document.querySelector(`.lang-btn[onclick="setLanguage('${lang}')"]`).classList.add('active');
         renderUI();
-    }
+    };
 
-    window.renderUI = function() {
+    window.renderUI = () => {
         const t = i18n[currentLang];
-        // Labels
         document.getElementById('ui-title').innerText = t.title;
         document.getElementById('ui-subtitle').innerText = t.subtitle;
+        document.getElementById('installBtn').innerText = t.install;
         document.getElementById('modal-title').innerText = t.modalTitle;
         document.getElementById('label-title').innerText = t.lblTitle;
         document.getElementById('label-start').innerText = t.lblStart;
@@ -402,104 +339,83 @@
         document.getElementById('btn-cancel').innerText = t.btnCancel;
         document.getElementById('btn-save').innerText = t.btnSave;
 
-        // Modal Options (Update text only)
         const opts = document.getElementById('inputType').options;
-        for(let i=0; i<opts.length; i++) {
-            opts[i].text = t.cats[opts[i].value] || opts[i].value;
-        }
+        for(let i=0; i<opts.length; i++) opts[i].text = t.cats[opts[i].value] || opts[i].value;
 
-        // Filter
-        const filterSelect = document.getElementById('monthFilter');
-        const currentVal = filterSelect.value || 'all';
-        filterSelect.innerHTML = `<option value="all">${t.allMonths}</option>`;
-        t.months.forEach((m, idx) => {
-            filterSelect.innerHTML += `<option value="${idx+1}">${m}</option>`;
-        });
-        filterSelect.value = currentVal;
-
+        const filter = document.getElementById('monthFilter');
+        const curr = filter.value || 'all';
+        filter.innerHTML = `<option value="all">${t.allMonths}</option>`;
+        t.months.forEach((m,i) => filter.innerHTML += `<option value="${i+1}">${m}</option>`);
+        filter.value = curr;
         renderCalendar();
-    }
+    };
 
-    window.renderCalendar = function() {
+    window.renderCalendar = () => {
         const grid = document.getElementById('calendarGrid');
-        const filterVal = document.getElementById('monthFilter').value;
+        const fVal = document.getElementById('monthFilter').value;
         const t = i18n[currentLang];
-        
         grid.innerHTML = '';
-        const filtered = allEvents.filter(e => filterVal === 'all' || e.month == filterVal);
+        const filtered = allEvents.filter(e => fVal === 'all' || e.month == fVal);
 
-        if (filtered.length === 0) {
-            grid.innerHTML = `<p style="text-align:center;width:100%;padding:50px;color:#999;">${t.empty}</p>`;
-            return;
-        }
+        if(filtered.length === 0) { grid.innerHTML = `<p style="text-align:center;width:100%;padding:30px;">${t.empty}</p>`; return; }
 
-        filtered.forEach((event, idx) => {
-            const isUser = event.source === 'user';
-            
-            // Title translation
-            let displayTitle = event.title;
-            if (typeof event.title === 'object') {
-                displayTitle = event.title[currentLang] || event.title.ko;
-            }
-
+        filtered.forEach((ev, idx) => {
+            let title = typeof ev.title === 'object' ? (ev.title[currentLang] || ev.title.ko) : ev.title;
+            const isUser = ev.source === 'user';
             const card = document.createElement('div');
-            // Add type class for styling (border color, etc.)
-            card.className = `event-card ${event.type}`;
-            card.style.animation = `fadeInUp 0.5s ease forwards ${idx * 0.05}s`;
-            
-            const badgeHtml = isUser ? `<div class="user-badge">Dept</div>` : '';
-            const categoryLabel = t.cats[event.type] || event.type;
-            
+            card.className = `event-card ${ev.type}`;
+            card.style.animation = `fadeIn 0.5s forwards ${idx*0.05}s`;
             card.innerHTML = `
-                ${badgeHtml}
-                <div class="content-box">
-                    <div class="event-month">${event.month} / ${t.months[event.month-1]}</div>
-                    <div class="event-date">${event.date}</div>
-                    <div class="event-title">${displayTitle}</div>
-                    <span class="tag ${event.type}">${categoryLabel}</span>
-                </div>
+                ${isUser ? '<div class="user-badge">Dept</div>' : ''}
+                <div class="event-month">${ev.month} / ${t.months[ev.month-1]}</div>
+                <div class="event-date">${ev.date}</div>
+                <div class="event-title">${title}</div>
+                <span class="tag ${ev.type}">${t.cats[ev.type] || ev.type}</span>
             `;
             grid.appendChild(card);
         });
-    }
+    };
 
-    window.saveEvent = function() {
+    window.saveEvent = () => {
         const title = document.getElementById('inputTitle').value;
         const start = document.getElementById('inputStart').value;
         const end = document.getElementById('inputEnd').value;
         const type = document.getElementById('inputType').value;
-
         if(!title || !start) return;
-
-        const dateString = (end && end !== start) ? `${start} ~ ${end}` : start;
+        const dateStr = (end && end !== start) ? `${start} ~ ${end}` : start;
         const month = new Date(start).getMonth() + 1;
-
-        const newEvent = {
-            title: title,
-            date: dateString,
-            month: month,
-            type: type, // 'dept-aim', 'dept-common', etc.
-            source: 'user',
-            createdAt: Date.now()
-        };
-
-        push(eventsRef, newEvent).then(() => {
-            closeModal();
-            document.getElementById('inputTitle').value = '';
-            document.getElementById('inputStart').value = '';
-        });
-    }
+        push(eventsRef, { title, date: dateStr, month, type, source: 'user', createdAt: Date.now() })
+            .then(() => { closeModal(); document.getElementById('inputTitle').value=''; document.getElementById('inputStart').value=''; });
+    };
 
     renderUI();
 </script>
 
 <script>
+    // --- Install Logic ---
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); deferredPrompt = e;
+        document.getElementById('installBtn').style.display = 'block';
+    });
+    async function installApp() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('installBtn').style.display = 'none';
+        } else {
+            // For iOS or Desktop where prompt is not supported
+            alert("아이폰(iOS): 사파리 하단 '공유' 버튼 -> '홈 화면에 추가'\n안드로이드: 브라우저 메뉴 -> '홈 화면에 추가'를 눌러주세요.");
+        }
+    }
+
     function openModal() { document.getElementById('eventModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('eventModal').style.display = 'none'; }
     window.onclick = function(e) { if(e.target == document.getElementById('eventModal')) closeModal(); }
     
-    const styleSheet = document.styleSheets[0];
-    styleSheet.insertRule(`@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`, styleSheet.cssRules.length);
+    const sheet = document.styleSheets[0];
+    sheet.insertRule(`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`, sheet.cssRules.length);
 </script>
 
 </body>
