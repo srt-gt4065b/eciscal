@@ -107,18 +107,25 @@
 <body>
 
 <script>
-    // PWA 아이콘 및 매니페스트 자동 생성 (건드릴 필요 없음)
+    // PWA 아이콘 및 매니페스트 설정
     const iconCanvas = document.createElement('canvas'); iconCanvas.width = 512; iconCanvas.height = 512;
     const ctx = iconCanvas.getContext('2d'); ctx.fillStyle = '#264653'; ctx.fillRect(0,0,512,512);
-    ctx.font = '300px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🎨', 256, 270);
+    ctx.font = '300px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('📅', 256, 270); // 아이콘 변경
     const iconUrl = iconCanvas.toDataURL('image/png');
+    
     const linkIcon = document.createElement('link'); linkIcon.rel = 'apple-touch-icon'; linkIcon.href = iconUrl; document.head.appendChild(linkIcon);
     const linkFav = document.createElement('link'); linkFav.rel = 'icon'; linkFav.href = iconUrl; document.head.appendChild(linkFav);
     
-    // [중요] GitHub Pages 호환성을 위해 start_url에 "./index.html" 명시
+    // [수정 핵심] start_url에 '절대 주소'를 넣어야 설치 버튼이 작동합니다.
     const manifest = {
-        "name": "ECIS Calendar", "short_name": "ECIS Cal", "start_url": "./index.html", "display": "standalone",
-        "background_color": "#FAF9F6", "theme_color": "#264653", "orientation": "portrait",
+        "name": "ECIS 학사일정",
+        "short_name": "ECIS Cal",
+        "start_url": "https://srt-gt4065b.github.io/eciscal/index.html", 
+        "scope": "https://srt-gt4065b.github.io/eciscal/",
+        "display": "standalone",
+        "background_color": "#FAF9F6",
+        "theme_color": "#264653",
+        "orientation": "portrait",
         "icons": [{ "src": iconUrl, "sizes": "512x512", "type": "image/png" }]
     };
     const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
@@ -188,7 +195,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
-    // 🔴 [YOUR FIREBASE CONFIG HERE]
+    // 파이어베이스 설정
     const firebaseConfig = {
       apiKey: "AIzaSyAdkdWL2ab0f_fiYvmS0Q_btAQP76-IufM",
       authDomain: "ecis-calendar-c83bb.firebaseapp.com",
@@ -204,15 +211,15 @@
     const db = getDatabase(app);
 
     let currentLang = 'ko';
-    // PWA 설치 이벤트 저장 변수
     let deferredPrompt; 
 
+    // 다국어 설정
     const i18n = {
         ko: {
             title: "2026 ECIS 학사 일정", subtitle: "우송대학교 Endicott College",
             allMonths: "전체 보기", empty: "일정이 없습니다.",
             modalTitle: "일정 추가", lblTitle: "제목", lblStart: "시작일", lblEnd: "종료일", lblCat: "구분",
-            btnCancel: "취소", btnSave: "저장", install: "📲 앱 설치하기", install_ios: "📲 아이폰 설치 가이드",
+            btnCancel: "취소", btnSave: "저장", install: "📲 앱 설치하기", install_ios: "📲 공유 버튼 -> 홈 화면에 추가",
             cats: { "dept-common":"🟢 공통", "dept-aim":"🟣 AI경영", "dept-aib":"🔵 AI빅데이터", "dept-gh":"🟡 글로벌호스피", "dept-id":"🟠 자유전공", holiday:"🔴 공휴일", academic:"🔵 학사", event:"🟡 행사" },
             months: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
         },
@@ -220,7 +227,7 @@
             title: "2026 ECIS Calendar", subtitle: "Woosong Univ. Endicott College",
             allMonths: "View All", empty: "No events.",
             modalTitle: "Add Event", lblTitle: "Title", lblStart: "Start", lblEnd: "End", lblCat: "Dept",
-            btnCancel: "Cancel", btnSave: "Save", install: "📲 Install App", install_ios: "📲 Install Guide (iOS)",
+            btnCancel: "Cancel", btnSave: "Save", install: "📲 Install App", install_ios: "📲 Share -> Add to Home Screen",
             cats: { "dept-common":"🟢 Common", "dept-aim":"🟣 AI Mgmt", "dept-aib":"🔵 AI BigData", "dept-gh":"🟡 Global Hosp", "dept-id":"🟠 Interdisciplinary", holiday:"🔴 Holiday", academic:"🔵 Academic", event:"🟡 Event" },
             months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
         },
@@ -228,25 +235,72 @@
             title: "2026 ECIS 校历", subtitle: "又松大学 Endicott 学院",
             allMonths: "查看全部", empty: "无日程",
             modalTitle: "添加日程", lblTitle: "标题", lblStart: "开始", lblEnd: "结束", lblCat: "分类",
-            btnCancel: "取消", btnSave: "保存", install: "📲 安装应用", install_ios: "📲 安装指南 (iOS)",
+            btnCancel: "取消", btnSave: "保存", install: "📲 安装应用", install_ios: "📲 分享 -> 添加到主屏幕",
             cats: { "dept-common":"🟢 公共", "dept-aim":"🟣 AI经营", "dept-aib":"🔵 AI大数据", "dept-gh":"🟡 全球酒店", "dept-id":"🟠 自由专业", holiday:"🔴 公休", academic:"🔵 学事", event:"🟡 活动" },
             months: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
         }
     };
 
+    // [중요] PDF 기반 2026년 학사일정 하드코딩 데이터
+    // type: holiday(빨강), academic(파랑-학사), event(노랑-행사)
     const staticEvents = [
-        { month: 1, date: "2026-01-01", type: "holiday", title: { ko: "새해", en: "New Year", zh: "元旦" } },
-        { month: 2, date: "2026-02-27", type: "event", title: { ko: "입학식", en: "Matriculation", zh: "入学典礼" } },
-        { month: 3, date: "2026-03-02", type: "academic", title: { ko: "개강", en: "Spring Begins", zh: "开学" } }
+        // 1월
+        { date: "2026-01-01", type: "holiday", title: { ko: "신정", en: "New Year's Day", zh: "元旦" } },
+        // 2월
+        { date: "2026-02-12", type: "academic", title: { ko: "전기 학위수여식", en: "Graduation Ceremony", zh: "学位授予仪式" } },
+        { date: "2026-02-16", type: "academic", title: { ko: "겨울학기 종강", en: "Winter Session Ends", zh: "冬季学期结束" } },
+        { date: "2026-02-17", type: "holiday", title: { ko: "설날", en: "Lunar New Year", zh: "春节" } },
+        { date: "2026-02-27", type: "event", title: { ko: "입학식", en: "Matriculation", zh: "入学典礼" } },
+        // 3월
+        { date: "2026-03-01", type: "holiday", title: { ko: "삼일절", en: "Independence Day", zh: "三一节" } },
+        { date: "2026-03-02", type: "academic", title: { ko: "1학기 개강", en: "Spring Semester Begins", zh: "春季学期开学" } },
+        // 5월
+        { date: "2026-05-01", type: "holiday", title: { ko: "근로자의 날", en: "Labor Day", zh: "劳动节" } },
+        { date: "2026-05-05", type: "holiday", title: { ko: "어린이날", en: "Children's Day", zh: "儿童节" } },
+        { date: "2026-05-15", type: "event", title: { ko: "스승의 날", en: "Teacher's Day", zh: "教师节" } },
+        { date: "2026-05-24", type: "holiday", title: { ko: "부처님오신날", en: "Buddha's Birthday", zh: "佛诞节" } },
+        { date: "2026-05-25", type: "holiday", title: { ko: "대체공휴일", en: "Substitute Holiday", zh: "替代公休日" } },
+        // 6월
+        { date: "2026-06-06", type: "holiday", title: { ko: "현충일", en: "Memorial Day", zh: "显忠日" } },
+        { date: "2026-06-15", type: "academic", title: { ko: "1학기 종강", en: "Semester Ends", zh: "学期结束" } },
+        { date: "2026-06-22", type: "academic", title: { ko: "여름학기 개강", en: "Summer Session Begins", zh: "夏季学期开学" } },
+        // 7월
+        { date: "2026-07-17", type: "holiday", title: { ko: "제헌절", en: "Constitution Day", zh: "制宪节" } },
+        { date: "2026-07-24", type: "academic", title: { ko: "여름학기 종강", en: "Summer Session Ends", zh: "夏季学期结束" } },
+        // 8월
+        { date: "2026-08-15", type: "holiday", title: { ko: "광복절", en: "Liberation Day", zh: "光复节" } },
+        { date: "2026-08-21", type: "academic", title: { ko: "후기 학위수여식", en: "Graduation (Summer)", zh: "学位授予仪式(夏季)" } },
+        { date: "2026-08-31", type: "academic", title: { ko: "2학기 개강", en: "Fall Semester Begins", zh: "秋季学期开学" } },
+        // 9월
+        { date: "2026-09-24", type: "holiday", title: { ko: "추석 연휴", en: "Chuseok Holiday", zh: "中秋连休" } },
+        { date: "2026-09-25", type: "holiday", title: { ko: "추석", en: "Chuseok", zh: "中秋节" } },
+        { date: "2026-09-26", type: "holiday", title: { ko: "추석 연휴", en: "Chuseok Holiday", zh: "中秋连休" } },
+        // 10월
+        { date: "2026-10-03", type: "holiday", title: { ko: "개천절", en: "Foundation Day", zh: "开天节" } },
+        { date: "2026-10-05", type: "holiday", title: { ko: "대체공휴일", en: "Substitute Holiday", zh: "替代公休日" } },
+        { date: "2026-10-09", type: "holiday", title: { ko: "한글날", en: "Hangeul Day", zh: "韩文节" } },
+        { date: "2026-10-15", type: "event", title: { ko: "개교기념일", en: "Anniversary", zh: "建校纪念日" } },
+        // 12월
+        { date: "2026-12-14", type: "academic", title: { ko: "2학기 종강", en: "Fall Semester Ends", zh: "秋季学期结束" } },
+        { date: "2026-12-21", type: "academic", title: { ko: "겨울학기 개강", en: "Winter Session Begins", zh: "冬季学期开学" } },
+        { date: "2026-12-25", type: "holiday", title: { ko: "성탄절", en: "Christmas", zh: "圣诞节" } }
     ];
 
     let allEvents = [];
     const eventsRef = ref(db, 'events');
+
+    // [중요] DB 데이터가 변경될 때마다: 기본일정 + DB일정 합치기
     onValue(eventsRef, (snap) => {
         const data = snap.val();
-        const userEvents = data ? Object.values(data) : [];
-        allEvents = [...staticEvents, ...userEvents].sort((a,b)=>a.date.localeCompare(b.date));
-        renderUI(); // 데이터 오면 화면 갱신
+        const userEvents = data ? Object.values(data) : []; // DB에서 가져온 일정
+        
+        // 두 배열 합치기
+        allEvents = [...staticEvents, ...userEvents]; 
+        
+        // 날짜순 정렬
+        allEvents.sort((a,b) => a.date.localeCompare(b.date));
+        
+        renderUI(); // 화면 갱신
     });
 
     window.setLanguage = (lang) => {
@@ -261,7 +315,7 @@
         document.getElementById('ui-title').innerText = t.title;
         document.getElementById('ui-subtitle').innerText = t.subtitle;
         
-        // PWA 버튼 텍스트
+        // PWA 버튼 처리
         const installBtn = document.getElementById('installBtn');
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         if(isIOS) installBtn.innerText = t.install_ios;
@@ -275,13 +329,11 @@
         document.getElementById('btn-cancel').innerText = t.btnCancel;
         document.getElementById('btn-save').innerText = t.btnSave;
         
-        // 모달창 카테고리 옵션 텍스트 업데이트
         const opts = document.getElementById('inputType').options;
         for(let i=0; i<opts.length; i++) {
              if(t.cats[opts[i].value]) opts[i].innerText = t.cats[opts[i].value];
         }
 
-        // 월 필터 셀렉트 박스 다시 그리기 (선택값 유지)
         const monthSelect = document.getElementById('monthFilter');
         const currentVal = monthSelect.value;
         monthSelect.innerHTML = `<option value="all">${t.allMonths}</option>`;
@@ -290,7 +342,7 @@
         });
         if(currentVal) monthSelect.value = currentVal;
 
-        renderCalendar(); // 실제 카드 그리기 호출
+        renderCalendar();
     };
 
     window.renderCalendar = () => {
@@ -300,10 +352,8 @@
         const filterVal = document.getElementById('monthFilter').value;
         const t = i18n[currentLang];
 
-        // 필터링
         const filtered = allEvents.filter(e => {
             if(filterVal === 'all') return true;
-            // e.month가 숫자형인지 확인 필요 (사용자가 넣은건 문자열일 수 있음)
             const m = parseInt(e.date.split('-')[1]); 
             return m === parseInt(filterVal);
         });
@@ -317,15 +367,12 @@
             const card = document.createElement('div');
             card.className = `event-card ${e.type}`;
             
-            // 제목 처리 (다국어 객체면 현재 언어, 아니면 그대로)
+            // 제목 다국어 처리 (객체면 현재언어, 아니면 그대로 표시)
             const titleText = (typeof e.title === 'object') ? (e.title[currentLang] || e.title.ko) : e.title;
             
-            // 날짜 포맷팅
             const d = new Date(e.date);
             const dateStr = `${d.getMonth()+1}.${d.getDate()}`;
             const monthName = t.months[d.getMonth()];
-
-            // 카테고리 이름
             const catName = t.cats[e.type] || e.type;
 
             card.innerHTML = `
@@ -339,7 +386,6 @@
         });
     };
 
-    // 모달 관련 함수
     window.openModal = () => { document.getElementById('eventModal').style.display = 'flex'; };
     window.closeModal = () => { document.getElementById('eventModal').style.display = 'none'; };
 
@@ -354,17 +400,16 @@
             title: title,
             date: start,
             type: type,
-            isUser: true,
+            isUser: true, // 사용자 추가 일정임을 표시
             createdAt: Date.now()
         }).then(() => {
             closeModal();
-            // 입력창 초기화
             document.getElementById('inputTitle').value = "";
             document.getElementById('inputStart').value = "";
         }).catch(err => alert("Error: " + err.message));
     };
 
-    // PWA 설치 로직
+    // PWA 설치 이벤트 감지
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -372,6 +417,7 @@
         if(btn) btn.style.display = 'inline-block';
     });
 
+    // 버튼 클릭 시 설치 실행
     window.handleInstall = () => {
         if (!deferredPrompt) return;
         deferredPrompt.prompt();
@@ -382,6 +428,9 @@
             deferredPrompt = null;
         });
     };
+
+    // 초기 실행: 데이터 로딩 전이라도 일단 UI 한번 그림
+    renderUI();
 </script>
 </body>
 </html>
