@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Woosong Art Calendar - Live Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #FAF9F6;
+            --deep-teal: #264653;
+            --warm-orange: #E76F51;
+            --muted-yellow: #E9C46A;
+            --accent-blue: #2A9D8F;
+            --text-dark: #2c3e50;
+            --card-shadow: 5px 5px 0px rgba(38, 70, 83, 0.15);
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(231, 111, 81, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(42, 157, 143, 0.05) 0%, transparent 20%);
+            background-attachment: fixed;
+        }
+
+        /* --- Header & Layout (Existing Style) --- */
+        header {
+            background-color: var(--deep-teal);
+            color: white;
+            padding: 60px 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+        
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 2.5em;
+            margin: 0;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: -10px; width: 100%; height: 8px;
+            background-color: var(--warm-orange);
+            transform: skewX(-20deg);
+        }
+        p { margin-top: 20px; font-size: 1.1em; opacity: 0.9; font-family: 'Montserrat'; }
+
+        .container {
+            max-width: 1100px;
+            margin: -30px auto 100px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .controls { text-align: center; margin-bottom: 40px; }
+        
+        select {
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 3px solid var(--deep-teal);
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--deep-teal);
+            background: white;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* --- Calendar Grid & Cards --- */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            align-items: start;
+        }
+
+        .event-card {
+            background: white;
+            border: 2px solid var(--deep-teal);
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: var(--card-shadow);
+            border-radius: 4px 12px 4px 12px;
+            overflow: hidden;
+        }
+        .event-card:hover {
+            transform: translate(-5px, -5px) rotate(-1deg);
+            box-shadow: 10px 10px 0px rgba(38, 70, 83, 0.1);
+            border-color: var(--warm-orange);
+            z-index: 1;
+        }
+        /* User Added Badge */
+        .user-badge {
+            position: absolute;
+            top: 0; right: 0;
+            background: var(--warm-orange);
+            color: white;
+            font-size: 0.6em;
+            padding: 4px 8px;
+            border-bottom-left-radius: 8px;
+            font-weight: bold;
+        }
+
+        .event-month {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            color: var(--accent-blue);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .event-date {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3em;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: var(--deep-teal);
+            background: linear-gradient(120deg, rgba(233, 196, 106, 0.4) 0%, rgba(233, 196, 106, 0) 100%);
+            display: inline-block;
+        }
+        .event-title { font-size: 1.15em; line-height: 1.5; font-weight: 600; margin-bottom: 20px; }
+        
+        .tag {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--deep-teal);
+            color: white;
+        }
+        .tag.user-custom { background: var(--warm-orange); }
+
+        /* --- Floating Action Button (FAB) --- */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background-color: var(--deep-teal);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.3s;
+            z-index: 100;
+            border: 2px solid white;
+        }
+        .fab:hover { transform: scale(1.1) rotate(90deg); background-color: var(--warm-orange); }
+
+        /* --- Modal (Artistic Form) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(38, 70, 83, 0.8);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--bg-cream);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            border: 4px solid var(--deep-teal);
+            box-shadow: 15px 15px 0 rgba(233, 196, 106, 0.8);
+            transform: rotate(-2deg);
+        }
+        .modal-content h2 {
+            font-family: 'Montserrat';
+            color: var(--deep-teal);
+            margin-top: 0;
+            border-bottom: 3px solid var(--warm-orange);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--text-dark); }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .form-group input:focus { border-color: var(--deep-teal); outline: none; }
+        
+        .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 30px; }
+        .btn {
+            padding: 12px 25px; border: none; border-radius: 30px;
+            font-weight: bold; cursor: pointer; font-size: 16px;
+            transition: all 0.2s;
+        }
+        .btn-save { background: var(--deep-teal); color: white; }
+        .btn-save:hover { background: var(--warm-orange); transform: translateY(-2px); }
+        .btn-cancel { background: #ddd; color: #555; }
+
+        @media (max-width: 768px) {
+            .calendar-grid { grid-template-columns: 1fr; padding-left: 20px; }
+            .calendar-grid::before {
+                content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 4px;
+                background: repeating-linear-gradient(45deg, var(--deep-teal), var(--deep-teal) 10px, var(--bg-cream) 10px, var(--bg-cream) 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>2026 Art Calendar</h1>
+    <p>우송대학교 학부 학사 일정표 + 사용자 일정 (Live Sync)</p>
+</header>
+
+<div class="container">
+    <div class="controls">
+        <select id="monthFilter">
+            <option value="all">🎨 전체 일정 모아보기</option>
+            <option value="1">1월 Jan</option> <option value="2">2월 Feb</option>
+            <option value="3">3월 Mar</option> <option value="4">4월 Apr</option>
+            <option value="5">5월 May</option> <option value="6">6월 Jun</option>
+            <option value="7">7월 Jul</option> <option value="8">8월 Aug</option>
+            <option value="9">9월 Sep</option> <option value="10">10월 Oct</option>
+            <option value="11">11월 Nov</option> <option value="12">12월 Dec</option>
+        </select>
+    </div>
+
+    <div id="calendarGrid" class="calendar-grid">
+        <p style="text-align:center;">데이터를 불러오는 중입니다...</p>
+    </div>
+</div>
+
+<div class="fab" onclick="openModal()">+</div>
+
+<div class="modal-overlay" id="eventModal">
+    <div class="modal-content">
+        <h2>✏️ Add New Event</h2>
+        <div class="form-group">
+            <label>일정 제목 (Title)</label>
+            <input type="text" id="inputTitle" placeholder="예: 동아리 축제, 과제 마감">
+        </div>
+        <div class="form-group">
+            <label>시작일 (Start Date)</label>
+            <input type="date" id="inputStart">
+        </div>
+        <div class="form-group">
+            <label>종료일 (End Date) *선택</label>
+            <input type="date" id="inputEnd">
+        </div>
+        <div class="form-group">
+            <label>분류 (Category)</label>
+            <select id="inputType">
+                <option value="user">📌 개인/학과 일정</option>
+                <option value="exam">✍️ 시험/과제</option>
+                <option value="party">🎉 축제/행사</option>
+            </select>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-cancel" onclick="closeModal()">취소</button>
+            <button class="btn btn-save" onclick="saveEvent()">저장하기</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+    // 🔴 [중요] 여기에 본인의 Firebase 프로젝트 설정을 붙여넣으세요!
+    const firebaseConfig = {
+       apiKey: "AIzaSyAdkdWL2ab0f_fiYvmS0Q_btAQP76-IufM",
+  authDomain: "ecis-calendar-c83bb.firebaseapp.com",
+  databaseURL: "https://ecis-calendar-c83bb-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ecis-calendar-c83bb",
+  storageBucket: "ecis-calendar-c83bb.firebasestorage.app",
+  messagingSenderId: "412332086060",
+  appId: "1:412332086060:web:fc3c0aeec7d298ffb5d289",
+  measurementId: "G-VEZ16FP32S"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // 1. Static Data (PDF 원본 데이터 - 고정값)
+    const staticEvents = [
+        { month: 1, date: "2026-01-01", title: "새해 첫날", type: "holiday" },
+        { month: 1, date: "2026-01-12 ~ 01-16", title: "1학기 전과 및 재입학 신청", type: "admin" },
+        { month: 2, date: "2026-02-12", title: "전기 학위수여식(졸업식)", type: "event" },
+        { month: 2, date: "2026-02-27", title: "입학식", type: "event" },
+        { month: 3, date: "2026-03-02", title: "1학기 개강일", type: "academic" },
+        { month: 4, date: "2026-04-20 ~ 04-26", title: "중간고사 기간", type: "academic" },
+        { month: 5, date: "2026-05-15", title: "스승의 날", type: "event" },
+        { month: 6, date: "2026-06-15", title: "1학기 종강일", type: "academic" },
+        { month: 9, date: "2026-09-01", title: "2학기 개강일", type: "academic" },
+        { month: 10, date: "2026-10-15", title: "개교기념일", type: "event" },
+        { month: 10, date: "2026-10-20 ~ 10-26", title: "중간고사 기간", type: "academic" },
+        { month: 12, date: "2026-12-14", title: "2학기 종강일", type: "academic" }
+        // ... (필요시 더 추가)
+    ];
+
+    let allEvents = []; // Static + User Data combined
+
+    // 2. Read Data from Firebase (Realtime)
+    const eventsRef = ref(db, 'events');
+    onValue(eventsRef, (snapshot) => {
+        const data = snapshot.val();
+        const userEvents = [];
+
+        if (data) {
+            Object.values(data).forEach(event => {
+                userEvents.push(event);
+            });
+        }
+
+        // 병합 및 정렬 (날짜순)
+        allEvents = [...staticEvents, ...userEvents].sort((a, b) => {
+            // 날짜 문자열 비교를 위해 간단히 처리 (YYYY-MM-DD 앞부분만 비교)
+            return a.date.localeCompare(b.date);
+        });
+
+        renderCalendar();
+    });
+
+    // 3. Render Logic
+    window.renderCalendar = function() {
+        const grid = document.getElementById('calendarGrid');
+        const filterVal = document.getElementById('monthFilter').value;
+        
+        grid.innerHTML = '';
+        grid.style.opacity = 0;
+
+        const filtered = allEvents.filter(e => filterVal === 'all' || e.month == filterVal);
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="text-align:center;width:100%;padding:50px;">해당 기간에 일정이 없습니다.</p>';
+            grid.style.opacity = 1;
+            return;
+        }
+
+        filtered.forEach((event, idx) => {
+            const isUser = event.source === 'user';
+            const dateStr = event.date.split('~')[0].trim();
+            const dateObj = new Date(dateStr);
+            const day = dateObj.getDate() || 'Date';
+            
+            const card = document.createElement('div');
+            card.className = `event-card ${event.type}`;
+            card.style.animation = `fadeInUp 0.5s ease forwards ${idx * 0.05}s`;
+            
+            // 사용자 추가 일정일 경우 뱃지 표시
+            const badgeHtml = isUser ? `<div class="user-badge">User Added</div>` : '';
+            
+            card.innerHTML = `
+                ${badgeHtml}
+                <div class="content-box">
+                    <div class="event-month">${event.month}월</div>
+                    <div class="event-date">${event.date}</div>
+                    <div class="event-title">${event.title}</div>
+                    <span class="tag ${isUser ? 'user-custom' : ''}">${getLabel(event.type)}</span>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        setTimeout(() => grid.style.opacity = 1, 100);
+    }
+
+    // 4. Write Data to Firebase
+    window.saveEvent = function() {
+        const title = document.getElementById('inputTitle').value;
+        const start = document.getElementById('inputStart').value;
+        const end = document.getElementById('inputEnd').value;
+        const type = document.getElementById('inputType').value;
+
+        if(!title || !start) { alert("제목과 시작일은 필수입니다."); return; }
+
+        const startDate = new Date(start);
+        const month = startDate.getMonth() + 1; // 1~12
+        
+        // 날짜 포맷팅 (YYYY-MM-DD ~ YYYY-MM-DD)
+        let dateString = start;
+        if(end && end !== start) {
+            dateString += ` ~ ${end}`;
+        }
+
+        const newEvent = {
+            title: title,
+            date: dateString,
+            month: month,
+            type: type,
+            source: 'user', // 구분자
+            createdAt: Date.now()
+        };
+
+        push(eventsRef, newEvent)
+            .then(() => {
+                closeModal();
+                // 입력창 초기화
+                document.getElementById('inputTitle').value = '';
+                document.getElementById('inputStart').value = '';
+                document.getElementById('inputEnd').value = '';
+            })
+            .catch((error) => {
+                console.error("Error writing document: ", error);
+                alert("저장 실패!");
+            });
+    }
+
+    // Helper Functions
+    function getLabel(type) {
+        if(type === 'holiday') return '🔴 공휴일';
+        if(type === 'academic') return '🔵 학사 일정';
+        if(type === 'admin') return '⚪️ 행정';
+        if(type === 'user') return '📌 개인 일정';
+        if(type === 'exam') return '✍️ 과제/시험';
+        return '🟡 행사';
+    }
+
+    // Filter Change Event
+    document.getElementById('monthFilter').addEventListener('change', renderCalendar);
+</script>
+
+<script>
+    function openModal() {
+        document.getElementById('eventModal').style.display = 'flex';
+    }
+    function closeModal() {
+        document.getElementById('eventModal').style.display = 'none';
+    }
+    // 모달 바깥 클릭시 닫기
+    window.onclick = function(event) {
+        const modal = document.getElementById('eventModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+    
+    // 스타일 애니메이션 주입
+    const styleSheet = document.styleSheets[0];
+    styleSheet.insertRule(`
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `, styleSheet.cssRules.length);
+</script>
+
+</body>
+</html>
