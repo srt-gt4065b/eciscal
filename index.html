@@ -80,6 +80,9 @@
         .event-card.dept-aib { border-left: 8px solid var(--col-aib); }
         .event-card.dept-gh { border-left: 8px solid var(--col-gh); }
         .event-card.dept-id { border-left: 8px solid var(--col-id); }
+        .event-card.holiday { border-left: 8px solid var(--col-holiday); }
+        .event-card.academic { border-left: 8px solid var(--col-academic); }
+        .event-card.event { border-left: 8px solid var(--deep-teal); }
 
         .user-badge { position: absolute; top: 15px; right: 15px; background: #333; color: white; font-size: 0.7em; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
         .event-month { font-weight: 900; color: #aaa; font-size: 0.8em; margin-bottom: 5px; }
@@ -104,6 +107,7 @@
 <body>
 
 <script>
+    // PWA 아이콘 및 매니페스트 자동 생성 (건드릴 필요 없음)
     const iconCanvas = document.createElement('canvas'); iconCanvas.width = 512; iconCanvas.height = 512;
     const ctx = iconCanvas.getContext('2d'); ctx.fillStyle = '#264653'; ctx.fillRect(0,0,512,512);
     ctx.font = '300px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🎨', 256, 270);
@@ -111,8 +115,9 @@
     const linkIcon = document.createElement('link'); linkIcon.rel = 'apple-touch-icon'; linkIcon.href = iconUrl; document.head.appendChild(linkIcon);
     const linkFav = document.createElement('link'); linkFav.rel = 'icon'; linkFav.href = iconUrl; document.head.appendChild(linkFav);
     
+    // [중요] GitHub Pages 호환성을 위해 start_url에 "./index.html" 명시
     const manifest = {
-        "name": "ECIS Calendar", "short_name": "ECIS Cal", "start_url": ".", "display": "standalone",
+        "name": "ECIS Calendar", "short_name": "ECIS Cal", "start_url": "./index.html", "display": "standalone",
         "background_color": "#FAF9F6", "theme_color": "#264653", "orientation": "portrait",
         "icons": [{ "src": iconUrl, "sizes": "512x512", "type": "image/png" }]
     };
@@ -122,14 +127,10 @@
 
 <script>
   if ('serviceWorker' in navigator) {
-    // blob 방식이 아니라, 방금 만든 sw.js 파일을 불러오게 합니다.
+    // [중요] sw.js 파일은 index.html과 같은 폴더에 있어야 함
     navigator.serviceWorker.register('./sw.js')
-      .then((reg) => {
-        console.log('서비스 워커 등록 성공:', reg);
-      })
-      .catch((err) => {
-        console.log('서비스 워커 등록 실패:', err);
-      });
+      .then((reg) => { console.log('서비스 워커 등록 성공:', reg); })
+      .catch((err) => { console.log('서비스 워커 등록 실패:', err); });
   }
 </script>
 
@@ -187,22 +188,25 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
-    // 🔴 [YOUR FIREBASE CONFIG HERE] - 실제 키값으로 교체 필수!
+    // 🔴 [YOUR FIREBASE CONFIG HERE]
     const firebaseConfig = {
-        apiKey: "AIzaSyAdkdWL2ab0f_fiYvmS0Q_btAQP76-IufM",
-  authDomain: "ecis-calendar-c83bb.firebaseapp.com",
-  databaseURL: "https://ecis-calendar-c83bb-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "ecis-calendar-c83bb",
-  storageBucket: "ecis-calendar-c83bb.firebasestorage.app",
-  messagingSenderId: "412332086060",
-  appId: "1:412332086060:web:fc3c0aeec7d298ffb5d289",
-  measurementId: "G-VEZ16FP32S"
+      apiKey: "AIzaSyAdkdWL2ab0f_fiYvmS0Q_btAQP76-IufM",
+      authDomain: "ecis-calendar-c83bb.firebaseapp.com",
+      databaseURL: "https://ecis-calendar-c83bb-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ecis-calendar-c83bb",
+      storageBucket: "ecis-calendar-c83bb.firebasestorage.app",
+      messagingSenderId: "412332086060",
+      appId: "1:412332086060:web:fc3c0aeec7d298ffb5d289",
+      measurementId: "G-VEZ16FP32S"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
     let currentLang = 'ko';
+    // PWA 설치 이벤트 저장 변수
+    let deferredPrompt; 
+
     const i18n = {
         ko: {
             title: "2026 ECIS 학사 일정", subtitle: "우송대학교 Endicott College",
@@ -242,7 +246,7 @@
         const data = snap.val();
         const userEvents = data ? Object.values(data) : [];
         allEvents = [...staticEvents, ...userEvents].sort((a,b)=>a.date.localeCompare(b.date));
-        renderUI();
+        renderUI(); // 데이터 오면 화면 갱신
     });
 
     window.setLanguage = (lang) => {
@@ -257,7 +261,7 @@
         document.getElementById('ui-title').innerText = t.title;
         document.getElementById('ui-subtitle').innerText = t.subtitle;
         
-        // Button Text Logic based on OS/Status
+        // PWA 버튼 텍스트
         const installBtn = document.getElementById('installBtn');
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         if(isIOS) installBtn.innerText = t.install_ios;
@@ -270,5 +274,114 @@
         document.getElementById('label-cat').innerText = t.lblCat;
         document.getElementById('btn-cancel').innerText = t.btnCancel;
         document.getElementById('btn-save').innerText = t.btnSave;
+        
+        // 모달창 카테고리 옵션 텍스트 업데이트
         const opts = document.getElementById('inputType').options;
-        for(let i=0; i
+        for(let i=0; i<opts.length; i++) {
+             if(t.cats[opts[i].value]) opts[i].innerText = t.cats[opts[i].value];
+        }
+
+        // 월 필터 셀렉트 박스 다시 그리기 (선택값 유지)
+        const monthSelect = document.getElementById('monthFilter');
+        const currentVal = monthSelect.value;
+        monthSelect.innerHTML = `<option value="all">${t.allMonths}</option>`;
+        t.months.forEach((m, idx) => {
+            monthSelect.innerHTML += `<option value="${idx+1}">${m}</option>`;
+        });
+        if(currentVal) monthSelect.value = currentVal;
+
+        renderCalendar(); // 실제 카드 그리기 호출
+    };
+
+    window.renderCalendar = () => {
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = "";
+        
+        const filterVal = document.getElementById('monthFilter').value;
+        const t = i18n[currentLang];
+
+        // 필터링
+        const filtered = allEvents.filter(e => {
+            if(filterVal === 'all') return true;
+            // e.month가 숫자형인지 확인 필요 (사용자가 넣은건 문자열일 수 있음)
+            const m = parseInt(e.date.split('-')[1]); 
+            return m === parseInt(filterVal);
+        });
+
+        if(filtered.length === 0) {
+            grid.innerHTML = `<p style="text-align:center; width:100%; margin-top:50px; color:#aaa;">${t.empty}</p>`;
+            return;
+        }
+
+        filtered.forEach(e => {
+            const card = document.createElement('div');
+            card.className = `event-card ${e.type}`;
+            
+            // 제목 처리 (다국어 객체면 현재 언어, 아니면 그대로)
+            const titleText = (typeof e.title === 'object') ? (e.title[currentLang] || e.title.ko) : e.title;
+            
+            // 날짜 포맷팅
+            const d = new Date(e.date);
+            const dateStr = `${d.getMonth()+1}.${d.getDate()}`;
+            const monthName = t.months[d.getMonth()];
+
+            // 카테고리 이름
+            const catName = t.cats[e.type] || e.type;
+
+            card.innerHTML = `
+                ${e.isUser ? '<span class="user-badge">User</span>' : ''}
+                <div class="event-month">${monthName}</div>
+                <div class="event-date">${dateStr}</div>
+                <div style="font-weight:bold; font-size:1.1em; word-break:keep-all;">${titleText}</div>
+                <span class="tag ${e.type}">${catName}</span>
+            `;
+            grid.appendChild(card);
+        });
+    };
+
+    // 모달 관련 함수
+    window.openModal = () => { document.getElementById('eventModal').style.display = 'flex'; };
+    window.closeModal = () => { document.getElementById('eventModal').style.display = 'none'; };
+
+    window.saveEvent = () => {
+        const title = document.getElementById('inputTitle').value;
+        const start = document.getElementById('inputStart').value;
+        const type = document.getElementById('inputType').value;
+
+        if(!title || !start) { alert("Title and Date required!"); return; }
+
+        push(ref(db, 'events'), {
+            title: title,
+            date: start,
+            type: type,
+            isUser: true,
+            createdAt: Date.now()
+        }).then(() => {
+            closeModal();
+            // 입력창 초기화
+            document.getElementById('inputTitle').value = "";
+            document.getElementById('inputStart').value = "";
+        }).catch(err => alert("Error: " + err.message));
+    };
+
+    // PWA 설치 로직
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btn = document.getElementById('installBtn');
+        if(btn) btn.style.display = 'inline-block';
+    });
+
+    window.handleInstall = () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted install');
+            }
+            deferredPrompt = null;
+        });
+    };
+</script>
+</body>
+</html>
