@@ -15,9 +15,7 @@
     
     <style>
         :root {
-            --bg-cream: #FAF9F6;
-            --deep-teal: #264653;
-            --text-dark: #2c3e50;
+            --bg-cream: #FAF9F6; --deep-teal: #264653; --text-dark: #2c3e50;
             --card-shadow: 5px 5px 0px rgba(38, 70, 83, 0.15);
             /* Department Colors */
             --col-common: #8BC34A; --col-aim: #9B59B6; --col-aib: #3498DB;
@@ -27,17 +25,11 @@
 
         body {
             font-family: 'Open Sans', 'Noto Sans SC', sans-serif;
-            background-color: var(--bg-cream);
-            color: var(--text-dark);
+            background-color: var(--bg-cream); color: var(--text-dark);
             margin: 0; padding: 0;
-            /* iOS Safe Area handling */
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(231, 111, 81, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(42, 157, 143, 0.05) 0%, transparent 20%);
-            background-attachment: fixed;
-            -webkit-tap-highlight-color: transparent;
+            padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+            background-image: radial-gradient(circle at 10% 20%, rgba(231, 111, 81, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(42, 157, 143, 0.05) 0%, transparent 20%);
+            background-attachment: fixed; -webkit-tap-highlight-color: transparent;
         }
 
         header {
@@ -47,8 +39,7 @@
         }
 
         .lang-switcher {
-            position: absolute; top: 20px; right: 20px;
-            display: flex; gap: 8px; z-index: 50;
+            position: absolute; top: 20px; right: 20px; display: flex; gap: 8px; z-index: 50;
         }
         .lang-btn {
             background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5);
@@ -57,38 +48,25 @@
         }
         .lang-btn.active { background: var(--col-gh); color: #333; border-color: var(--col-gh); }
 
-        h1 {
-            font-family: 'Montserrat', sans-serif; font-weight: 900;
-            font-size: 1.8em; margin: 0; text-transform: uppercase;
-            position: relative; display: inline-block; line-height: 1.2;
-        }
+        h1 { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.8em; margin: 0; text-transform: uppercase; line-height: 1.2; }
         p { margin-top: 15px; font-size: 1em; opacity: 0.9; }
 
-        .container {
-            max-width: 800px; margin: -30px auto 100px;
-            padding: 0 15px; position: relative; z-index: 10;
-        }
+        .container { max-width: 800px; margin: -30px auto 100px; padding: 0 15px; position: relative; z-index: 10; }
 
-        .controls { text-align: center; margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; }
-        select {
-            padding: 10px 20px; border-radius: 30px;
-            border: 3px solid var(--deep-teal); font-size: 16px;
-            font-weight: 700; color: var(--deep-teal); background: white;
-        }
+        .controls { text-align: center; margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        select { padding: 10px 20px; border-radius: 30px; border: 3px solid var(--deep-teal); font-size: 16px; font-weight: 700; color: var(--deep-teal); background: white; }
 
-        /* Install Button (Hidden by default) */
+        /* Install Button Styles */
         #installBtn {
-            display: none; padding: 10px 20px; border-radius: 30px;
+            display: none; /* JS will toggle this */
+            padding: 10px 20px; border-radius: 30px;
             background: var(--col-id); color: white; border: none;
             font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            animation: pulse 2s infinite; cursor: pointer;
+            cursor: pointer; animation: pulse 2s infinite;
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        .calendar-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-            gap: 20px; align-items: start;
-        }
+        .calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 20px; align-items: start; }
         @media(min-width: 600px) { .calendar-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); } }
 
         .event-card {
@@ -97,107 +75,59 @@
             box-shadow: var(--card-shadow); transition: transform 0.2s;
         }
         .event-card:active { transform: scale(0.98); }
-
-        /* Department Colors */
         .event-card.dept-common { border-left: 8px solid var(--col-common); }
         .event-card.dept-aim { border-left: 8px solid var(--col-aim); }
         .event-card.dept-aib { border-left: 8px solid var(--col-aib); }
         .event-card.dept-gh { border-left: 8px solid var(--col-gh); }
         .event-card.dept-id { border-left: 8px solid var(--col-id); }
 
-        .user-badge {
-            position: absolute; top: 15px; right: 15px;
-            background: #333; color: white; font-size: 0.7em;
-            padding: 3px 8px; border-radius: 10px; font-weight: bold;
-        }
-
+        .user-badge { position: absolute; top: 15px; right: 15px; background: #333; color: white; font-size: 0.7em; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
         .event-month { font-weight: 900; color: #aaa; font-size: 0.8em; margin-bottom: 5px; }
-        .event-date {
-            font-family: 'Montserrat'; font-size: 1.4em; font-weight: 900;
-            margin-bottom: 10px; color: var(--deep-teal);
-        }
-        .tag {
-            display: inline-block; padding: 5px 10px; border-radius: 15px;
-            font-size: 0.7em; font-weight: 700; color: white; margin-top: 10px;
-        }
-        .tag.dept-common { background: var(--col-common); }
-        .tag.dept-aim { background: var(--col-aim); }
-        .tag.dept-aib { background: var(--col-aib); }
-        .tag.dept-gh { background: var(--col-gh); color: #333; }
-        .tag.dept-id { background: var(--col-id); }
-        .tag.holiday { background: var(--col-holiday); }
-        .tag.academic { background: var(--col-academic); }
-        .tag.event { background: var(--deep-teal); }
+        .event-date { font-family: 'Montserrat'; font-size: 1.4em; font-weight: 900; margin-bottom: 10px; color: var(--deep-teal); }
+        .tag { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 0.7em; font-weight: 700; color: white; margin-top: 10px; }
+        .tag.dept-common { background: var(--col-common); } .tag.dept-aim { background: var(--col-aim); }
+        .tag.dept-aib { background: var(--col-aib); } .tag.dept-gh { background: var(--col-gh); color: #333; }
+        .tag.dept-id { background: var(--col-id); } .tag.holiday { background: var(--col-holiday); }
+        .tag.academic { background: var(--col-academic); } .tag.event { background: var(--deep-teal); }
 
-        /* FAB */
-        .fab {
-            position: fixed; bottom: 30px; right: 20px;
-            width: 60px; height: 60px;
-            background-color: var(--deep-teal); color: white;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 28px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 100;
-            border: 2px solid white; cursor: pointer;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 200; backdrop-filter: blur(3px);
-            align-items: center; justify-content: center;
-        }
-        .modal-content {
-            background: #fff; padding: 30px 20px; width: 85%; max-width: 400px;
-            border-radius: 20px; border: 3px solid var(--deep-teal);
-        }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
-        .form-group input, .form-group select {
-            width: 100%; padding: 10px; border: 2px solid #ddd;
-            border-radius: 10px; box-sizing: border-box; font-size: 16px;
-        }
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background-color: var(--deep-teal); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 100; border: 2px solid white; cursor: pointer; }
+        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; backdrop-filter: blur(3px); align-items: center; justify-content: center; }
+        .modal-content { background: #fff; padding: 30px 20px; width: 85%; max-width: 400px; border-radius: 20px; border: 3px solid var(--deep-teal); }
+        .form-group { margin-bottom: 15px; } .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
         .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
         .btn { padding: 10px 20px; border-radius: 20px; border: none; font-weight: bold; }
-        .btn-save { background: var(--deep-teal); color: white; }
-        .btn-cancel { background: #eee; }
+        .btn-save { background: var(--deep-teal); color: white; } .btn-cancel { background: #eee; }
     </style>
 </head>
 <body>
 
 <script>
-    // 1. Create Dynamic Icon (Emoji)
-    const iconCanvas = document.createElement('canvas');
-    iconCanvas.width = 512; iconCanvas.height = 512;
-    const ctx = iconCanvas.getContext('2d');
-    ctx.fillStyle = '#264653'; ctx.fillRect(0,0,512,512); // Background
-    ctx.font = '300px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('🎨', 256, 270); // Emoji
+    const iconCanvas = document.createElement('canvas'); iconCanvas.width = 512; iconCanvas.height = 512;
+    const ctx = iconCanvas.getContext('2d'); ctx.fillStyle = '#264653'; ctx.fillRect(0,0,512,512);
+    ctx.font = '300px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🎨', 256, 270);
     const iconUrl = iconCanvas.toDataURL('image/png');
-
-    // 2. Inject Link Tags
-    const linkIcon = document.createElement('link');
-    linkIcon.rel = 'apple-touch-icon'; linkIcon.href = iconUrl;
-    document.head.appendChild(linkIcon);
-    const linkFav = document.createElement('link');
-    linkFav.rel = 'icon'; linkFav.href = iconUrl;
-    document.head.appendChild(linkFav);
-
-    // 3. Create Dynamic Manifest
+    const linkIcon = document.createElement('link'); linkIcon.rel = 'apple-touch-icon'; linkIcon.href = iconUrl; document.head.appendChild(linkIcon);
+    const linkFav = document.createElement('link'); linkFav.rel = 'icon'; linkFav.href = iconUrl; document.head.appendChild(linkFav);
+    
     const manifest = {
-        "name": "ECIS Calendar",
-        "short_name": "ECIS Cal",
-        "start_url": ".",
-        "display": "standalone",
-        "background_color": "#FAF9F6",
-        "theme_color": "#264653",
-        "orientation": "portrait",
+        "name": "ECIS Calendar", "short_name": "ECIS Cal", "start_url": ".", "display": "standalone",
+        "background_color": "#FAF9F6", "theme_color": "#264653", "orientation": "portrait",
         "icons": [{ "src": iconUrl, "sizes": "512x512", "type": "image/png" }]
     };
-    const stringManifest = JSON.stringify(manifest);
-    const blob = new Blob([stringManifest], {type: 'application/json'});
-    const manifestURL = URL.createObjectURL(blob);
-    const linkManifest = document.createElement('link');
-    linkManifest.rel = 'manifest'; linkManifest.href = manifestURL;
-    document.head.appendChild(linkManifest);
+    const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+    const linkManifest = document.createElement('link'); linkManifest.rel = 'manifest'; linkManifest.href = URL.createObjectURL(blob); document.head.appendChild(linkManifest);
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        // Create a dummy service worker inline
+        const swContent = "self.addEventListener('install', (e) => { self.skipWaiting(); }); self.addEventListener('fetch', (e) => { /* Passthrough */ });";
+        const swBlob = new Blob([swContent], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl).catch(console.error);
+    }
 </script>
 
 <header>
@@ -212,7 +142,7 @@
 
 <div class="container">
     <div class="controls">
-        <button id="installBtn" onclick="installApp()">📲 Install App</button>
+        <button id="installBtn" onclick="handleInstall()">📲 Install App</button>
         <select id="monthFilter" onchange="renderCalendar()"></select>
     </div>
 
@@ -227,24 +157,19 @@
     <div class="modal-content">
         <h2 id="modal-title">✏️ Add Event</h2>
         <div class="form-group">
-            <label id="label-title">Title</label>
-            <input type="text" id="inputTitle">
+            <label id="label-title">Title</label> <input type="text" id="inputTitle">
         </div>
         <div class="form-group">
-            <label id="label-start">Start Date</label>
-            <input type="date" id="inputStart">
+            <label id="label-start">Start Date</label> <input type="date" id="inputStart">
         </div>
         <div class="form-group">
-            <label id="label-end">End Date</label>
-            <input type="date" id="inputEnd">
+            <label id="label-end">End Date</label> <input type="date" id="inputEnd">
         </div>
         <div class="form-group">
             <label id="label-cat">Dept / Category</label>
             <select id="inputType">
-                <option value="dept-common">🟢 Common</option>
-                <option value="dept-aim">🟣 AI Mgmt</option>
-                <option value="dept-aib">🔵 AI BigData</option>
-                <option value="dept-gh">🟡 Global Hosp</option>
+                <option value="dept-common">🟢 Common</option> <option value="dept-aim">🟣 AI Mgmt</option>
+                <option value="dept-aib">🔵 AI BigData</option> <option value="dept-gh">🟡 Global Hosp</option>
                 <option value="dept-id">🟠 Interdisciplinary</option>
             </select>
         </div>
@@ -274,14 +199,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Multilingual Data
     let currentLang = 'ko';
     const i18n = {
         ko: {
             title: "2026 ECIS 학사 일정", subtitle: "우송대학교 Endicott College",
             allMonths: "전체 보기", empty: "일정이 없습니다.",
             modalTitle: "일정 추가", lblTitle: "제목", lblStart: "시작일", lblEnd: "종료일", lblCat: "구분",
-            btnCancel: "취소", btnSave: "저장", install: "📲 앱 설치하기",
+            btnCancel: "취소", btnSave: "저장", install: "📲 앱 설치하기", install_ios: "📲 아이폰 설치 가이드",
             cats: { "dept-common":"🟢 공통", "dept-aim":"🟣 AI경영", "dept-aib":"🔵 AI빅데이터", "dept-gh":"🟡 글로벌호스피", "dept-id":"🟠 자유전공", holiday:"🔴 공휴일", academic:"🔵 학사", event:"🟡 행사" },
             months: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
         },
@@ -289,7 +213,7 @@
             title: "2026 ECIS Calendar", subtitle: "Woosong Univ. Endicott College",
             allMonths: "View All", empty: "No events.",
             modalTitle: "Add Event", lblTitle: "Title", lblStart: "Start", lblEnd: "End", lblCat: "Dept",
-            btnCancel: "Cancel", btnSave: "Save", install: "📲 Install App",
+            btnCancel: "Cancel", btnSave: "Save", install: "📲 Install App", install_ios: "📲 Install Guide (iOS)",
             cats: { "dept-common":"🟢 Common", "dept-aim":"🟣 AI Mgmt", "dept-aib":"🔵 AI BigData", "dept-gh":"🟡 Global Hosp", "dept-id":"🟠 Interdisciplinary", holiday:"🔴 Holiday", academic:"🔵 Academic", event:"🟡 Event" },
             months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
         },
@@ -297,7 +221,7 @@
             title: "2026 ECIS 校历", subtitle: "又松大学 Endicott 学院",
             allMonths: "查看全部", empty: "无日程",
             modalTitle: "添加日程", lblTitle: "标题", lblStart: "开始", lblEnd: "结束", lblCat: "分类",
-            btnCancel: "取消", btnSave: "保存", install: "📲 安装应用",
+            btnCancel: "取消", btnSave: "保存", install: "📲 安装应用", install_ios: "📲 安装指南 (iOS)",
             cats: { "dept-common":"🟢 公共", "dept-aim":"🟣 AI经营", "dept-aib":"🔵 AI大数据", "dept-gh":"🟡 全球酒店", "dept-id":"🟠 自由专业", holiday:"🔴 公休", academic:"🔵 学事", event:"🟡 活动" },
             months: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
         }
@@ -307,7 +231,6 @@
         { month: 1, date: "2026-01-01", type: "holiday", title: { ko: "새해", en: "New Year", zh: "元旦" } },
         { month: 2, date: "2026-02-27", type: "event", title: { ko: "입학식", en: "Matriculation", zh: "入学典礼" } },
         { month: 3, date: "2026-03-02", type: "academic", title: { ko: "개강", en: "Spring Begins", zh: "开学" } }
-        // 필요 시 더 추가
     ];
 
     let allEvents = [];
@@ -330,7 +253,13 @@
         const t = i18n[currentLang];
         document.getElementById('ui-title').innerText = t.title;
         document.getElementById('ui-subtitle').innerText = t.subtitle;
-        document.getElementById('installBtn').innerText = t.install;
+        
+        // Button Text Logic based on OS/Status
+        const installBtn = document.getElementById('installBtn');
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if(isIOS) installBtn.innerText = t.install_ios;
+        else installBtn.innerText = t.install;
+
         document.getElementById('modal-title').innerText = t.modalTitle;
         document.getElementById('label-title').innerText = t.lblTitle;
         document.getElementById('label-start').innerText = t.lblStart;
@@ -338,85 +267,5 @@
         document.getElementById('label-cat').innerText = t.lblCat;
         document.getElementById('btn-cancel').innerText = t.btnCancel;
         document.getElementById('btn-save').innerText = t.btnSave;
-
         const opts = document.getElementById('inputType').options;
-        for(let i=0; i<opts.length; i++) opts[i].text = t.cats[opts[i].value] || opts[i].value;
-
-        const filter = document.getElementById('monthFilter');
-        const curr = filter.value || 'all';
-        filter.innerHTML = `<option value="all">${t.allMonths}</option>`;
-        t.months.forEach((m,i) => filter.innerHTML += `<option value="${i+1}">${m}</option>`);
-        filter.value = curr;
-        renderCalendar();
-    };
-
-    window.renderCalendar = () => {
-        const grid = document.getElementById('calendarGrid');
-        const fVal = document.getElementById('monthFilter').value;
-        const t = i18n[currentLang];
-        grid.innerHTML = '';
-        const filtered = allEvents.filter(e => fVal === 'all' || e.month == fVal);
-
-        if(filtered.length === 0) { grid.innerHTML = `<p style="text-align:center;width:100%;padding:30px;">${t.empty}</p>`; return; }
-
-        filtered.forEach((ev, idx) => {
-            let title = typeof ev.title === 'object' ? (ev.title[currentLang] || ev.title.ko) : ev.title;
-            const isUser = ev.source === 'user';
-            const card = document.createElement('div');
-            card.className = `event-card ${ev.type}`;
-            card.style.animation = `fadeIn 0.5s forwards ${idx*0.05}s`;
-            card.innerHTML = `
-                ${isUser ? '<div class="user-badge">Dept</div>' : ''}
-                <div class="event-month">${ev.month} / ${t.months[ev.month-1]}</div>
-                <div class="event-date">${ev.date}</div>
-                <div class="event-title">${title}</div>
-                <span class="tag ${ev.type}">${t.cats[ev.type] || ev.type}</span>
-            `;
-            grid.appendChild(card);
-        });
-    };
-
-    window.saveEvent = () => {
-        const title = document.getElementById('inputTitle').value;
-        const start = document.getElementById('inputStart').value;
-        const end = document.getElementById('inputEnd').value;
-        const type = document.getElementById('inputType').value;
-        if(!title || !start) return;
-        const dateStr = (end && end !== start) ? `${start} ~ ${end}` : start;
-        const month = new Date(start).getMonth() + 1;
-        push(eventsRef, { title, date: dateStr, month, type, source: 'user', createdAt: Date.now() })
-            .then(() => { closeModal(); document.getElementById('inputTitle').value=''; document.getElementById('inputStart').value=''; });
-    };
-
-    renderUI();
-</script>
-
-<script>
-    // --- Install Logic ---
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault(); deferredPrompt = e;
-        document.getElementById('installBtn').style.display = 'block';
-    });
-    async function installApp() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            deferredPrompt = null;
-            document.getElementById('installBtn').style.display = 'none';
-        } else {
-            // For iOS or Desktop where prompt is not supported
-            alert("아이폰(iOS): 사파리 하단 '공유' 버튼 -> '홈 화면에 추가'\n안드로이드: 브라우저 메뉴 -> '홈 화면에 추가'를 눌러주세요.");
-        }
-    }
-
-    function openModal() { document.getElementById('eventModal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('eventModal').style.display = 'none'; }
-    window.onclick = function(e) { if(e.target == document.getElementById('eventModal')) closeModal(); }
-    
-    const sheet = document.styleSheets[0];
-    sheet.insertRule(`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`, sheet.cssRules.length);
-</script>
-
-</body>
-</html>
+        for(let i=0; i
